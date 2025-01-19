@@ -1,8 +1,8 @@
-Fs = 1000; % Sampling frequency (Hz)
-Fc = 1000; % Cutoff frequency (Hz)
-filter_order = 200; % Filter order
-passband_ripple = 0.01; % Maximum ripple in the passband
-stopband_attenuation = 60; % Minimum attenuation in the stopband
+Fs = 1000; 
+Fc = 1000; 
+filter_order = 200; 
+passband_ripple = 0.01; 
+stopband_attenuation = 60; 
 
 normalized_cutoff = Fc / (Fs / 2);
 fir_highpass_filter = firpm(filter_order, [0 normalized_cutoff 1.5*normalized_cutoff 1], [0 0 1 1], [1 stopband_attenuation]);
@@ -15,7 +15,7 @@ baseline_drift = 0.3*sin(2*pi*0.1*t);
 random_noise = 0.2 * randn(size(t));
 ecg_with_noise = ecg_clean_signal + baseline_drift + random_noise;
 
-%% 1. Adaptive Filtering (LMS) for Noise Reduction
+% 1. Adaptive Filtering (LMS) for Noise Reduction
 lms_step_size = 0.01; 
 lms_filter_order = 50; 
 len = length(ecg_with_noise);
@@ -31,7 +31,7 @@ for n = lms_filter_order+1:len
     lms_filter_weights = lms_filter_weights + 2 * lms_step_size * lms_error_signal(n) * x; 
 end
 
-%% 2. Real-Time Filtering Simulation (Processing in Chunks)
+% 2. Real-Time Filtering Simulation (Processing in Chunks)
 chunk_size = Fs; 
 filtered_ecg_realtime = zeros(size(ecg_with_noise)); 
 
@@ -41,7 +41,7 @@ for i = 1:chunk_size:length(ecg_with_noise)
     filtered_ecg_realtime(i:chunk_end) = filter(fir_highpass_filter, 1, chunk); 
 end
 
-%% 3. Compare FIR Filter with IIR Filter
+% 3. Compare FIR Filter with IIR Filter
 [iir_filter_coeff_b, iir_filter_coeff_a] = butter(4, 0.1); 
 iir_filtered_ecg = filter(iir_filter_coeff_b, iir_filter_coeff_a, ecg_with_noise); 
 
